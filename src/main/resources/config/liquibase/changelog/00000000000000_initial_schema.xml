@@ -24,8 +24,7 @@
             <column name="type" type="character varying(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="latitude" type="numeric"/> <!-- Assuming latitude as numeric -->
-            <column name="longitude" type="numeric"/> <!-- Assuming longitude as numeric -->
+            <column name="location" type="jsonb"/>
         </createTable>
 
         <addForeignKeyConstraint baseTableName="address"
@@ -45,7 +44,7 @@
             <column name="type" type="character varying(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="coordinates" type="TEXT"/>
+            <column name="coordinates" type="jsonb"/>
         </createTable>
 
         <addForeignKeyConstraint baseTableName="coverage_area"
@@ -55,20 +54,15 @@
                                  constraintName="fk_coverage_area_partner"/>
     </changeSet>
 
-    <changeSet id="4" author="author">
-        <loadData file="config/liquibase/data/partner.csv" usePreparedStatements="true" tableName="partner"/>
+    <changeSet id="insert-partner-data" author="author">
+        <sqlFile path="config/liquibase/data/partner.sql"/>
     </changeSet>
 
-    <changeSet id="5" author="author">
-        <loadData file="config/liquibase/data/address.csv" usePreparedStatements="true" tableName="address"/>
+    <changeSet id="insert-address-data" author="author">
+        <sqlFile path="config/liquibase/data/address.sql"/>
     </changeSet>
 
-    <changeSet id="6" author="author">
-        <loadData file="config/liquibase/data/coverage_area.csv" usePreparedStatements="true" tableName="coverage_area">
-            <column name="id" type="${uuidType}"/>
-            <column name="partner_id" type="${uuidType}"/>
-            <column name="type" type="VARCHAR(255)"/>
-            <column name="coordinates" type="TEXT"/>
-        </loadData>
+    <changeSet id="insert-coverage-area-data" author="author">
+        <sqlFile path="config/liquibase/data/coverage-area.sql"/>
     </changeSet>
 </databaseChangeLog>
