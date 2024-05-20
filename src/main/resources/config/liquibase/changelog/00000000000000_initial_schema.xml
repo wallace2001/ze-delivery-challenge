@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="00000000000001" author="wallace">
+        <createTable tableName="partner">
+            <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="trading_name" type="character varying(255)"/>
+            <column name="owner_name" type="character varying(255)"/>
+            <column name="document" type="character varying(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="author">
+        <createTable tableName="address">
+            <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="partner_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="character varying(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="latitude" type="numeric"/> <!-- Assuming latitude as numeric -->
+            <column name="longitude" type="numeric"/> <!-- Assuming longitude as numeric -->
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="address"
+                                 baseColumnNames="partner_id"
+                                 referencedTableName="partner"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_address_partner"/>
+    </changeSet>
+    <changeSet id="3" author="author">
+        <createTable tableName="coverage_area">
+            <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="partner_id" type="${uuidType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="character varying(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="coordinates" type="TEXT"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="coverage_area"
+                                 baseColumnNames="partner_id"
+                                 referencedTableName="partner"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_coverage_area_partner"/>
+    </changeSet>
+
+    <changeSet id="4" author="author">
+        <loadData file="config/liquibase/data/partner.csv" usePreparedStatements="true" tableName="partner"/>
+    </changeSet>
+
+    <changeSet id="5" author="author">
+        <loadData file="config/liquibase/data/address.csv" usePreparedStatements="true" tableName="address"/>
+    </changeSet>
+
+    <changeSet id="6" author="author">
+        <loadData file="config/liquibase/data/coverage_area.csv" usePreparedStatements="true" tableName="coverage_area">
+            <column name="id" type="${uuidType}"/>
+            <column name="partner_id" type="${uuidType}"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="coordinates" type="TEXT"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>
