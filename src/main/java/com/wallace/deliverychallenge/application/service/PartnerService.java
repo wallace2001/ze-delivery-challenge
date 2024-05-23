@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PartnerService {
-    void createPartner(String partnerJson) throws JsonProcessingException, ParseException;
+    List<Partner> createOrUpdatePartner(String partnerJson) throws JsonProcessingException, ParseException;
 
     Partner getPartnerById(UUID id);
-    void updatePartner(UUID id, String partnerJson) throws JsonProcessingException;
 
     void deletePartner(UUID id);
 

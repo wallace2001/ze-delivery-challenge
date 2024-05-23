@@ -30,31 +30,20 @@ public class PartnerServiceImpl implements PartnerService {
     private final GeometryFactory geometryFactory = new GeometryFactory();
 
     @Override
-    public void createPartner(String partnerJson) throws JsonProcessingException, ParseException {
+    public List<Partner> createOrUpdatePartner(String partnerJson) throws JsonProcessingException, ParseException {
         ObjectMapper customObjectMapper = new ObjectMapper();
         List<Partner> partners = customObjectMapper.readValue(partnerJson, new TypeReference<List<Partner>>() {});
 
         for (Partner partner: partners) {
             partner.setDocument(partner.getDocument().replaceAll("[./]", ""));
         }
-        partnerRepository.saveAll(partners);
+        return partnerRepository.saveAll(partners);
     }
 
     @Override
     public Partner getPartnerById(UUID id) {
         Optional<Partner> optionalPartner = partnerRepository.findById(id);
         return optionalPartner.orElse(null);
-    }
-
-    @Override
-    public void updatePartner(UUID id, String partnerJson) throws JsonProcessingException {
-        ObjectMapper customObjectMapper = new ObjectMapper();
-        List<Partner> partners = customObjectMapper.readValue(partnerJson, new TypeReference<List<Partner>>() {});
-
-        for (Partner partner: partners) {
-            partner.setDocument(partner.getDocument().replaceAll("[./]", ""));
-        }
-        partnerRepository.saveAll(partners);
     }
 
     @Override
