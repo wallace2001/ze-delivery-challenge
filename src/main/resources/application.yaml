@@ -1,4 +1,7 @@
 spring:
+  http:
+    converters:
+      preferred-json-mapper: jsonb
   application:
       name: delivery-challenge
   profiles:
@@ -11,9 +14,14 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+      show-sql: true
+      type_contribuitors: com.example.JsonbTypeContributor
+
+store:
+  distance:
+    range: 2
 
 server:
   port: 8083
 
 resource-uri: https://api.github.com/user/repos
-
