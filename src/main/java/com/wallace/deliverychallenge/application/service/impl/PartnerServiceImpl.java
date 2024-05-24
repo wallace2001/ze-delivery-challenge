@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wallace.deliverychallenge.application.service.PartnerService;
 import com.wallace.deliverychallenge.domain.model.Partner;
 import com.wallace.deliverychallenge.domain.repository.PartnerRepository;
+import com.wallace.deliverychallenge.infraestructure.exception.ExceptionError;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.io.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,25 +31,37 @@ public class PartnerServiceImpl implements PartnerService {
     private final GeometryFactory geometryFactory = new GeometryFactory();
 
     @Override
-    public List<Partner> createOrUpdatePartner(String partnerJson) throws JsonProcessingException, ParseException {
-        ObjectMapper customObjectMapper = new ObjectMapper();
-        List<Partner> partners = customObjectMapper.readValue(partnerJson, new TypeReference<List<Partner>>() {});
+    public List<Partner> createOrUpdatePartner(String partnerJson) throws ExceptionError {
+        try {
+            ObjectMapper customObjectMapper = new ObjectMapper();
+            List<Partner> partners = customObjectMapper.readValue(partnerJson, new TypeReference<List<Partner>>() {});
 
-        for (Partner partner: partners) {
-            partner.setDocument(partner.getDocument().replaceAll("[./]", ""));
+            for (Partner partner: partners) {
+                partner.setDocument(partner.getDocument().replaceAll("[./]", ""));
+            }
+            return partnerRepository.saveAll(partners);
+        } catch (Exception ex) {
+            throw new ExceptionError(ex);
         }
-        return partnerRepository.saveAll(partners);
     }
 
     @Override
-    public Partner getPartnerById(UUID id) {
-        Optional<Partner> optionalPartner = partnerRepository.findById(id);
-        return optionalPartner.orElse(null);
+    public Partner getPartnerById(UUID id) throws ExceptionError {
+        try {
+            Optional<Partner> optionalPartner = partnerRepository.findById(id);
+            return optionalPartner.orElse(null);
+        } catch (Exception ex) {
+            throw new ExceptionError(ex);
+        }
     }
 
     @Override
-    public void deletePartner(UUID id) {
-     partnerRepository.deleteById(id);
+    public void deletePartner(UUID id) throws ExceptionError {
+        try {
+            partnerRepository.deleteById(id);
+        } catch (Exception ex) {
+            throw new ExceptionError(ex);
+        }
     }
 
     @Override

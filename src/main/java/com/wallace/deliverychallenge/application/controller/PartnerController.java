@@ -1,19 +1,17 @@
 package com.wallace.deliverychallenge.application.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wallace.deliverychallenge.application.service.PartnerService;
 import com.wallace.deliverychallenge.domain.model.Partner;
+import com.wallace.deliverychallenge.infraestructure.exception.ExceptionError;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.locationtech.jts.io.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,18 +25,18 @@ import java.util.UUID;
                 content = @Content) })
 @RestController
 @RequestMapping("/partner")
-public class ParnerController {
+public class PartnerController {
 
     @Autowired
     private PartnerService partnerService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Partner> getPartnerById(@PathVariable("id") UUID id) {
+    public ResponseEntity<?> getPartnerById(@PathVariable("id") UUID id) throws ExceptionError {
         Partner partner = partnerService.getPartnerById(id);
         if (partner != null) {
             return ResponseEntity.ok(partner);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Partner not found with id: " + id);
         }
     }
 
@@ -106,7 +104,7 @@ public class ParnerController {
                     "    }\n" +
                     "]")
             @RequestBody String partnerJson
-    ) throws JsonProcessingException, SQLException, ParseException {
+    ) throws ExceptionError {
         try {
             List<Partner> partners = partnerService.createOrUpdatePartner(partnerJson);
             return new ResponseEntity<>(partners, HttpStatus.CREATED);
@@ -254,7 +252,7 @@ public class ParnerController {
                     "    }\n" +
                     "]")
             @RequestBody String partnerJson
-    ) throws JsonProcessingException {
+    ) {
         try {
             List<Partner> partners = partnerService.createOrUpdatePartner(partnerJson);
             return new ResponseEntity<>(partners, HttpStatus.CREATED);
@@ -264,7 +262,7 @@ public class ParnerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePartner(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> deletePartner(@PathVariable("id") UUID id) throws ExceptionError {
         partnerService.deletePartner(id);
         return ResponseEntity.noContent().build();
     }
