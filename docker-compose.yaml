@@ -10,9 +10,9 @@ services:
     environment:
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydatabase
+      POSTGRES_DB: delivery
     volumes:
-      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./init-scripts:/docker-entrypoint-initdb.d
     networks:
       - app
 
